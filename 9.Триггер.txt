@@ -1,0 +1,43 @@
+**Создадим триггер на модерацию отзывов.
+
+**Создадим таблицу запрещенных слов. И заполним ее, для примера запрещенное возьмем запрещенное слово test.
+
+CREATE TABLE banned_words (
+  word VARCHAR (255)
+);
+
+INSERT INTO banned_words VALUES ('test');
+
+**Создадим функцию со всей логикой модерации. 
+
+CREATE OR REPLACE FUNCTION update_message_body_trigger()
+RETURNS TRIGGER AS
+$$
+DECLARE is_found BOOLEAN;
+BEGIN
+ is_found := EXISTS(SELECT * FROM banned_words WHERE NEW.body LIKE '%' || word || '%' );
+IF is_found THEN
+  NEW.body := '_MODERATED_';
+ END IF;
+RETURN NEW;
+END
+$$
+LANGUAGE PLPGSQL;
+
+**Создадим триггер для каждой обновляемой строки.
+
+CREATE TRIGGER check_message_on_update BEFORE UPDATE ON customer_reviews
+FOR EACH ROW
+EXECUTE FUNCTION update_message_body_trigger();
+
+**Создадим триггер для проверки новых сообщений.
+
+CREATE TRIGGER check_message_on_insert BEFORE INSERT ON customer_reviews
+FOR EACH ROW
+EXECUTE FUNCTION update_message_body_trigger();
+
+**Проверим его
+
+UPDATE customer_reviews SET body = 'new test two' WHERE id = 18;
+
+SELECT body FROM customer_reviews WHERE id = 18; 

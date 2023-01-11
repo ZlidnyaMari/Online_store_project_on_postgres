@@ -1,0 +1,26 @@
+** Узнаем на какую сумму содержится товаров в категории с id=2. Сохраним в функцию, проверим ее.
+
+CREATE FUNCTION summ_product_category()
+RETURNS numeric AS
+$$
+SELECT 
+ SUM(price) AS summ_product_category_2
+FROM products
+WHERE category_id = 2;
+$$
+LANGUAGE SQL
+
+SELECT summ_product_category();
+________________________________________________________________________________
+** Узнаем сколько заказов у покупателя с id = 2;  Сохраним в функцию, проверим ее.
+
+CREATE FUNCTION number_order_user(num_user_id INTEGER)
+RETURNS bigint AS
+$$
+SELECT COUNT(number_order)
+FROM orders
+WHERE user_id = num_user_id;
+$$
+LANGUAGE SQL
+
+SELECT number_order_user(2);

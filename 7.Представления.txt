@@ -1,0 +1,25 @@
+Узнаем номера карт всех пользователей. Проверим представление.
+
+CREATE VIEW number_cart_user AS
+SELECT 
+ users.name,
+ number_cart_user
+FROM linked_cards
+ JOIN users
+  ON users.id = user_id;
+  
+SELECT * FROM number_cart_user LIMIT 3;	
+_________________________________________________________________________ 
+**Узнаем сколько продуктов содержится в каждой из категорий. Проверим представление.
+CREATE VIEW count_product_category AS
+SELECT 
+ categories_product.name,
+ COUNT(products.description) AS count
+FROM categories_product, products 
+WHERE products.category_id = categories_product.id
+ GROUP BY categories_product.name;
+ 
+SELECT * FROM count_product_category WHERE count > 10;
+ 
+
+

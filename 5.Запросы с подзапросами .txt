@@ -1,0 +1,23 @@
+** Найдем все id продукта, его описание, номер заказа и время заказа по имени покупателя Venus West.
+ 
+SELECT 
+ product_id,
+ description AS description_product,
+ number_order AS number_order_product,
+ created_at AS created_at_odrer_product
+FROM orders
+ JOIN products
+  ON product_id = products.id
+WHERE user_id = 
+    (SELECT id FROM users WHERE name = 'Venus West');
+__________________________________________________________________________
+** Найдем номера и даты последних 5 доставок со статусом отгружено.
+
+SELECT 
+ order_id,
+ delivary_date
+FROM delivery
+  WHERE status_id = 
+      (SELECT id FROM statuses WHERE name = 'Отгружено')
+ORDER BY delivary_date DESC
+LIMIT 5;	

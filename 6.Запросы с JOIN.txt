@@ -1,0 +1,29 @@
+**Узнаем 10 позиций товаров и их производителей по минимальной цене в категории посуда.
+
+SELECT 
+ price,
+ description,
+ categories_product.name,
+ manufacturers.name
+FROM products
+ JOIN categories_product
+  ON categories_product.name  = 'посуда'
+ JOIN manufacturers
+  ON manufacturers.id = products.manufacturer_id
+ORDER BY price  
+LIMIT 10;
+________________________________________________________________________________
+** Узнать имена, товары, причину и дату возвратов за 2023год и отсортировать от начала года.
+
+SELECT 
+ users.name,
+ products.description,
+ reason_for_return,
+ created_at
+ FROM returns_product
+  LEFT JOIN products
+   ON products.id = returns_product.product_id
+  LEFT JOIN users
+   ON users.id = returns_product.user_id
+WHERE created_at BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 00:00:00'
+ORDER BY created_at;	

@@ -1,0 +1,32 @@
+** Выполним команду построения плана запроса.
+
+EXPLAIN SELECT 
+ users.name,
+ products.description,
+ reason_for_return,
+ created_at
+ FROM returns_product
+  LEFT JOIN products
+   ON products.id = returns_product.product_id
+  LEFT JOIN users
+   ON users.id = returns_product.user_id
+WHERE created_at BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 00:00:00'
+ORDER BY created_at;
+
+
+**Проверим и настроим индексы. Проверим индексы на объеденяемые таблицы.
+
+SELECT indexname FROM pg_indexes WHERE tablename = 'products';
+SELECT indexname FROM pg_indexes WHERE tablename = 'users';
+SELECT indexname FROM pg_indexes WHERE tablename = 'returns_product';
+
+**В таблице есть индексы только на первичные ключи, создадим и для внешних ключей.
+
+CREATE INDEX returns_product_id_fk ON returns_product (product_id);
+CREATE INDEX returns_product_user_id_fk ON returns_product (user_id);
+
+CREATE INDEX product_category_id_fk ON products (category_id);
+CREATE INDEX manufacturer_product_id_fk ON products (manufacturer_id);
+
+**А так же для поля сортировки.
+CREATE INDEX created_at_return_product ON returns_product(created_at);

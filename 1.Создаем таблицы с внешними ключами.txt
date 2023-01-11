@@ -1,0 +1,109 @@
+*Создаем таблицу users.
+
+CREATE TABLE users (
+ id SERIAL PRIMARY KEY,
+ name VARCHAR(50) NOT NULL,
+ phone VARCHAR(15) NOT NULL UNIQUE,
+ email VARCHAR(15) NOT NULL UNIQUE,
+ date_or_registration TIMESTAMP
+);
+__________________________________________________________________
+*Создаем таблицу превязанных карт польователей.
+
+CREATE TABLE linked_cards (
+ id SERIAL PRIMARY KEY,
+ user_id INT NOT NULL,
+ number_cart_user VARCHAR(19) NOT NULL UNIQUE,
+CONSTRAINT linked_card_users_id_fk
+FOREIGN KEY (user_id) REFERENCES users (id)
+);
+__________________________________________________________________
+*Создаем таблицу производителей.
+
+CREATE TABLE manufacturers (
+ id SERIAL PRIMARY KEY,
+ name VARCHAR(150) NOT NULL UNIQUE
+);
+_________________________________________________________________
+*Создаем таблицу категорий товаров.
+
+CREATE TABLE categories_product (
+ id SERIAL PRIMARY KEY,
+ name VARCHAR(30) NOT NULL UNIQUE
+);
+_________________________________________________________________
+*Создаем таблицу продуктов.
+
+CREATE TABLE products (
+ id SERIAL PRIMARY KEY,
+ description text,
+ price DECIMAL(10,2) NOT NULL,
+ category_id INT NOT NULL,
+ manufacturer_id INT NOT NULL,
+CONSTRAINT product_category_id_fk
+FOREIGN KEY (category_id) REFERENCES category_product(id),
+CONSTRAINT manufacturer_product_id_fk
+FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(id)
+);
+_________________________________________________________________
+*Создаем таблицу заказов.
+
+CREATE TABLE orders (
+ id SERIAL PRIMARY KEY,
+ user_id INT NOT NULL,
+ product_id INT NOT NULL,
+ number_order INT UNIQUE,
+ created_at TIMESTAMP,
+CONSTRAINT orders_user_id_fk 
+FOREIGN KEY (user_id) REFERENCES users (id),
+CONSTRAINT orders_product_id_fk
+FOREIGN KEY (product_id) REFERENCES products (id)
+);
+_________________________________________________________________
+*Создаем таблицу статусов доставки.
+
+CREATE TABLE statuses (
+ id SERIAL PRIMARY KEY,
+ name VARCHAR(50)
+);
+_________________________________________________________________
+*Создаем таблицу доставки.
+
+CREATE TABLE delivery (
+ id SERIAL PRIMARY KEY,
+ order_id INT NOT NULL,
+ delivary_date TIMESTAMP,
+ status_id INT NOT NULL,
+CONSTRAINT delivery_order_id_fk
+FOREIGN KEY (order_id) REFERENCES orders (id),
+CONSTRAINT delivery_status_id_fk
+FOREIGN KEY (status_id) REFERENCES statuses (id)
+);
+_________________________________________________________________
+*Создаем таблицу возвратов товара.
+
+CREATE TABLE returns_product (
+ id SERIAL PRIMARY KEY,
+ product_id INT NOT NULL,
+ user_id INT NOT NULL,
+ reason_for_return text NOT NULL,
+ created_at TIMESTAMP,
+CONSTRAINT returns_product_id_fk
+FOREIGN KEY (product_id) REFERENCES products (id),
+CONSTRAINT returns_product_user_id_fk
+FOREIGN KEY (user_id) REFERENCES users (id)
+);
+________________________________________________________________
+*Создаем таблицу отзывов о товаре.
+
+CREATE TABLE customer_reviews (
+ id SERIAL PRIMARY KEY,
+ user_id INT NOT NULL,
+ product_id INT NOT NULL,
+ body text,
+ created_at TIMESTAMP,
+CONSTRAINT customer_reviews_user_id_fk
+FOREIGN KEY (user_id) REFERENCES users (id),
+CONSTRAINT customer_reviews_product_id_fk
+FOREIGN KEY (product_id) REFERENCES products (id)
+);
